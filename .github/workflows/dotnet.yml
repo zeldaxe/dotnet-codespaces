@@ -1,0 +1,447 @@
+# This workflow will build a .NET project
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
+
+name: .NET
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.0.x
+    - name: Restore dependencies
+      run: dotnet restore
+    - name: Build
+      run: dotnet build --no-restore
+    - name: Test
+      run: dotnet test --no-build --verbosity normal
+    - name: Cache
+  uses: actions/cache@v4.0.2
+  with:
+    # A list of files, directories, and wildcard patterns to cache and restore
+    path: 
+    # An explicit key for restoring and saving the cache
+    key: 
+    # An ordered list of keys to use for restoring stale cache if no cache hit occurred for key. Note `cache-hit` returns false in this case.
+    restore-keys: # optional
+    # The chunk size used to split up large files during upload, in bytes
+    upload-chunk-size: # optional
+    # An optional boolean when enabled, allows windows runners to save or restore caches that can be restored or saved respectively on other platforms
+    enableCrossOsArchive: # optional, default is false
+    # Fail the workflow if cache entry is not found
+    fail-on-cache-miss: # optional, default is false
+    # Check if a cache entry exists for the given input(s) (key, restore-keys) without downloading the cache
+    lookup-only: # optional, default is false
+    # Run the post step to save the cache even if another step before fails
+    save-always: # optional, default is false
+                      - name: Setup Node.js environment
+  uses: actions/setup-node@v4.0.2
+  with:
+    # Set always-auth in npmrc.
+    always-auth: # optional, default is false
+    # Version Spec of the version to use. Examples: 12.x, 10.15.1, >=10.15.0.
+    node-version: # optional
+    # File containing the version Spec of the version to use.  Examples: package.json, .nvmrc, .node-version, .tool-versions.
+    node-version-file: # optional
+    # Target architecture for Node to use. Examples: x86, x64. Will use system architecture by default.
+    architecture: # optional
+    # Set this option if you want the action to check for the latest available version that satisfies the version spec.
+    check-latest: # optional
+    # Optional registry to set up for auth. Will set the registry in a project level .npmrc and .yarnrc file, and set up auth to read in from env.NODE_AUTH_TOKEN.
+    registry-url: # optional
+    # Optional scope for authenticating against scoped registries. Will fall back to the repository owner when using the GitHub Packages registry (https://npm.pkg.github.com/).
+    scope: # optional
+    # Used to pull node distributions from node-versions. Since there's a default, this is typically not supplied by the user. When running this action on github.com, the default value is sufficient. When running on GHES, you can pass a personal access token for github.com if you are experiencing rate limiting.
+    token: # optional, default is ${{ github.server_url == 'https://github.com' && github.token || '' }}
+    # Used to specify a package manager for caching in the default directory. Supported values: npm, yarn, pnpm.
+    cache: # optional
+    # Used to specify the path to a dependency file: package-lock.json, yarn.lock, etc. Supports wildcards or a list of file names for caching multiple dependencies.
+    cache-dependency-path: # optional
+                      - name: Setup Java JDK
+  uses: actions/setup-java@v4.2.1
+  with:
+    # The Java version to set up. Takes a whole or semver Java version. See examples of supported syntax in README file
+    java-version: # optional
+    # The path to the `.java-version` file. See examples of supported syntax in README file
+    java-version-file: # optional
+    # Java distribution. See the list of supported distributions in README file
+    distribution: 
+    # The package type (jdk, jre, jdk+fx, jre+fx)
+    java-package: # optional, default is jdk
+    # The architecture of the package (defaults to the action runner's architecture)
+    architecture: # optional
+    # Path to where the compressed JDK is located
+    jdkFile: # optional
+    # Set this option if you want the action to check for the latest available version that satisfies the version spec
+    check-latest: # optional
+    # ID of the distributionManagement repository in the pom.xml file. Default is `github`
+    server-id: # optional, default is github
+    # Environment variable name for the username for authentication to the Apache Maven repository. Default is $GITHUB_ACTOR
+    server-username: # optional, default is GITHUB_ACTOR
+    # Environment variable name for password or token for authentication to the Apache Maven repository. Default is $GITHUB_TOKEN
+    server-password: # optional, default is GITHUB_TOKEN
+    # Path to where the settings.xml file will be written. Default is ~/.m2.
+    settings-path: # optional
+    # Overwrite the settings.xml file if it exists. Default is "true".
+    overwrite-settings: # optional, default is true
+    # GPG private key to import. Default is empty string.
+    gpg-private-key: # optional
+    # Environment variable name for the GPG private key passphrase. Default is $GPG_PASSPHRASE.
+    gpg-passphrase: # optional
+    # Name of the build platform to cache dependencies. It can be "maven", "gradle" or "sbt".
+    cache: # optional
+    # The path to a dependency file: pom.xml, build.gradle, build.sbt, etc. This option can be used with the `cache` option. If this option is omitted, the action searches for the dependency file in the entire repository. This option supports wildcards and a list of file names for caching multiple dependencies.
+    cache-dependency-path: # optional
+    # Workaround to pass job status to post job step. This variable is not intended for manual setting
+    job-status: # optional, default is ${{ job.status }}
+    # The token used to authenticate when fetching version manifests hosted on github.com, such as for the Microsoft Build of OpenJDK. When running this action on github.com, the default value is sufficient. When running on GHES, you can pass a personal access token for github.com if you are experiencing rate limiting.
+    token: # optional, default is ${{ github.server_url == 'https://github.com' && github.token || '' }}
+    # Name of Maven Toolchain ID if the default name of "${distribution}_${java-version}" is not wanted. See examples of supported syntax in Advanced Usage file
+    mvn-toolchain-id: # optional
+    # Name of Maven Toolchain Vendor if the default name of "${distribution}" is not wanted. See examples of supported syntax in Advanced Usage file
+    mvn-toolchain-vendor: # optional
+                      - name: Download a Build Artifact
+  uses: actions/download-artifact@v4.1.4
+  with:
+    # Name of the artifact to download. If unspecified, all artifacts for the run are downloaded.
+    name: # optional
+    # Destination path. Supports basic tilde expansion. Defaults to $GITHUB_WORKSPACE
+    path: # optional
+    # A glob pattern matching the artifacts that should be downloaded. Ignored if name is specified.
+    pattern: # optional
+    # When multiple artifacts are matched, this changes the behavior of the destination directories. If true, the downloaded artifacts will be in the same directory specified by path. If false, the downloaded artifacts will be extracted into individual named directories within the specified path.
+    merge-multiple: # optional, default is false
+    # The GitHub token used to authenticate with the GitHub API. This is required when downloading artifacts from a different repository or from a different workflow run. If this is not specified, the action will attempt to download artifacts from the current repository and the current workflow run.
+    github-token: # optional
+    # The repository owner and the repository name joined together by "/". If github-token is specified, this is the repository that artifacts will be downloaded from.
+    repository: # optional, default is ${{ github.repository }}
+    # The id of the workflow run where the desired download artifact was uploaded from. If github-token is specified, this is the run that artifacts will be downloaded from.
+    run-id: # optional, default is ${{ github.run_id }}
+ 
+                      - name: Setup .NET Core SDK
+  uses: actions/setup-dotnet@v4.0.0
+  with:
+    # Optional SDK version(s) to use. If not provided, will install global.json version when available. Examples: 2.2.104, 3.1, 3.1.x, 3.x, 6.0.2xx
+    dotnet-version: # optional
+    # Optional quality of the build. The possible values are: daily, signed, validated, preview, ga.
+    dotnet-quality: # optional
+    # Optional global.json location, if your global.json isn't located in the root of the repo.
+    global-json-file: # optional
+    # Optional package source for which to set up authentication. Will consult any existing NuGet.config in the root of the repo and provide a temporary NuGet.config using the NUGET_AUTH_TOKEN environment variable as a ClearTextPassword
+    source-url: # optional
+    # Optional OWNER for using packages from GitHub Package Registry organizations/users other than the current repository's owner. Only used if a GPR URL is also provided in source-url
+    owner: # optional
+    # Optional NuGet.config location, if your NuGet.config isn't located in the root of the repo.
+    config-file: # optional
+    # Optional input to enable caching of the NuGet global-packages folder
+    cache: # optional
+    # Used to specify the path to a dependency file: packages.lock.json. Supports wildcards or a list of file names for caching multiple dependencies.
+    cache-dependency-path: # optional
+                      - name: Deploy to IBM Cloud Foundry
+  # You may pin to the exact commit or the version.
+  # uses: IBM/cloudfoundry-deploy@fcb5a74cb36e7cd0bfe9f9b5d9d57aab85d00bd1
+  uses: IBM/cloudfoundry-deploy@v2.1
+  with:
+    # IBM Cloud API key
+    IBM_CLOUD_API_KEY: 
+    # IBM Cloud Foundry API endpoint
+    IBM_CLOUD_CF_API: 
+    # IBM Cloud Foundry organization name
+    IBM_CLOUD_CF_ORG: 
+    # IBM Cloud Foundry space name
+    IBM_CLOUD_CF_SPACE: 
+    # App Manifest file
+    APP_MANIFEST_FILE: # optional, default is manifest.yml
+    # App variables file
+    APP_VARS_FILE: # optional
+    # IBM Cloud Foundry resource group
+    RESOURCE_GROUP: # optional
+                      - name: Liquibase Execute Sql Action
+  # You may pin to the exact commit or the version.
+  # uses: liquibase-github-actions/execute-sql@2d26b6efdb4a709670714882c247a90fe26d8c6c
+  uses: liquibase-github-actions/execute-sql@v4.27.0
+  with:
+    # The default catalog name to use for the database connection
+    defaultCatalogName: # optional
+    # The default schema name to use for the database connection
+    defaultSchemaName: # optional
+    # Delimiter to use when executing SQL script
+    delimiter: # optional
+    # The JDBC driver class
+    driver: # optional
+    # The JDBC driver properties file
+    driverPropertiesFile: # optional
+    # Password to use to connect to the database
+    password: # optional
+    # SQL string to execute
+    sql: # optional
+    # SQL script to execute
+    sqlFile: # optional
+    # *required* The JDBC database connection URL
+    url: 
+    # Username to use to connect to the database
+    username: # optional
+    # If true, a subset of the MdcKeys, as defined by product, will be set to empty strings upon system startup.
+    addEmptyMdcValues: # optional
+    # Allows duplicated changeset identifiers without failing Liquibase execution.
+    allowDuplicatedChangesetIdentifiers: # optional
+    # If true, drop and recreate a view instead of replacing it.
+    alwaysDropInsteadOfReplace: # optional
+    # When generating SQL for createProcedure, should the procedure schema be forced to the default schema if no schemaName attribute is set?
+    alwaysOverrideStoredLogicSchema: # optional
+    # Should Liquibase automatically include REORG TABLE commands when needed?
+    autoReorg: # optional
+    # Number of seconds wait between checks to the changelog lock when it is locked
+    changelogLockPollRate: # optional
+    # Number of minutes to wait for the changelog lock to be available before giving up
+    changelogLockWaitTimeInMinutes: # optional
+    # Configures how to handle unknown fields in changelog files. Possible values: STRICT which causes parsing to fail, and LAX which continues with the parsing.
+    changelogParseMode: # optional
+    # Additional classpath entries to use
+    classpath: # optional
+    # Should Liquibase convert to/from STANDARD data types. Applies to both snapshot and update commands.
+    convertDataTypes: # optional
+    # [PRO]Relative or fully qualified path to a yaml file containing key:value data to inject or exclude data from JSON structured logs. Learn more at https://docs.liquibase.com/structured-logging
+    customLogDataFile: # optional
+    # [PRO]The frequency that the custom log data will be entered into the logs. Available options are: ONCE,REPEATED
+    customLogDataFrequency: # optional
+    # Name of table to use for tracking concurrent Liquibase usage
+    databaseChangelogLockTableName: # optional
+    # Name of table to use for tracking change history
+    databaseChangelogTableName: # optional
+    # Class to use for Database implementation
+    databaseClass: # optional
+    # If true, extensions are captured in the history table
+    dbclhistoryCaptureExtensions: # optional
+    # If true, executed SQL is captured in the history table
+    dbclhistoryCaptureSql: # optional
+    # [PRO]This property enables Liquibase Pro users to store a record of all database changing liquibase operations in a new table DATABASECHANGELOGHISTORY. This table includes records of rollback, dropalls, and repeated runOnChange type activity, which is not available in the standard DATABASECHANGELOG table.
+    dbclhistoryEnabled: # optional
+    # The exit code to use if an exception is encountered while recording history events
+    dbclhistorySeverity: # optional
+    # 
+    dbclhistoryTableName: # optional
+    # The DDL_LOCK_TIMEOUT parameter indicates the number of seconds a DDL command should wait for the locks to become available before throwing the resource busy error message. This applies only to Oracle databases.
+    ddlLockTimeout: # optional
+    # File with default Liquibase properties
+    defaultsFile: # optional
+    # Should Liquibase compare column order in diff operation?
+    diffColumnOrder: # optional
+    # How to handle multiple files being found in the search path that have duplicate paths. Options are WARN (log warning and choose one at random) or ERROR (fail current operation)
+    duplicateFileMode: # optional
+    # Throw an error if Liquibase detects that an includeAll will cause a circular reference (and thus a changelog parse error).
+    errorOnCircularIncludeAll: # optional
+    # Encoding to use when reading files. Valid values include: UTF-8, UTF-16, UTF-16BE, UTF-16LE, US-ASCII, or OS to use the system configured encoding.
+    fileEncoding: # optional
+    # DEPRECATED: No longer used
+    filterLogMessages: # optional
+    # If true, display a more verbose output for the FlowFile toString representation
+    flowVerboseToString: # optional
+    # Should Liquibase include a "created" attribute in diff/generateChangelog changesets with the current datetime
+    generateChangesetCreatedValues: # optional
+    # Should Liquibase include the change description in the id when generating changesets?
+    generatedChangesetIdsContainsDescription: # optional
+    # Force liquibase to think it has no access to a keyboard
+    headless: # optional
+    # Should Liquibase include the catalog name when determining equality?
+    includeCatalogInSpecification: # optional
+    # If set to true, and there are multiple identical tags in the database changelog table, all of the newer matching tags will be rolled back while rolling back to the oldest tag. The default value for this option was false for all Liquibase versions equal to or older than 4.25.1.
+    includeMatchingTagInRollbackOldest: # optional
+    # If true, the parent relationship for computed columns is preserved in snapshot-dependent commands: snapshot and diff
+    includeRelationsForComputedColumns: # optional
+    # Include the system classpath when resolving classes at runtime
+    includeSystemClasspath: # optional
+    # Liquibase Pro or Liquibase Labs license key used to unlock paid capabilities. Get a free trial at https://liquibase.com/trial and use in CLI or add liquibase.licenseKey=<yourKey> into your defaults file.
+    licenseKey: # optional
+    # Catalog to use for Liquibase objects
+    liquibaseCatalogName: # optional
+    # Schema to use for Liquibase objects
+    liquibaseSchemaName: # optional
+    # Tablespace to use for Liquibase objects
+    liquibaseTablespaceName: # optional
+    # Controls which log channels have their level set by the liquibase.logLevel setting. Comma separate multiple values. To set the level of all channels, use "all". Example: liquibase,org.mariadb.jdbc
+    logChannels: # optional
+    # 
+    logFile: # optional
+    # Sets the format of log output to console or log files. Open Source users default to unstructured "TEXT" logs to the console or output log files. Pro users have the option to set value as "JSON" or "JSON_PRETTY" to enable json-structured log files to the console or output log files.
+    logFormat: # optional
+    # Controls which logs get set to stderr AND to any log file. The CLI defaults, if log file set, to SEVERE. Others vary by integration. The official log levels are: OFF, SEVERE, WARNING, INFO, FINE
+    logLevel: # optional
+    # When set to true, the console messages are mirrored to the logs as [liquibase.ui] to provide a more complete picture of liquibase operations to log analysis tools. Set to false to change this behavior.
+    mirrorConsoleMessagesToLog: # optional
+    # How to handle changelog property expressions where a value is not set. For example, a string "${address}" when no "address" property was defined. Values can be: "preserve" which leaves the string as-is, "empty" which replaces it with an empty string, or "error" which stops processing with an error.
+    missingPropertyMode: # optional
+    # Enable performance tracking. Set to "false" to disable. If set to "true", data is stored to a `liquibase-TIMESTAMP.jfr` file in your working directory. Any other value will enable tracking and be used as the name of the file to write the data to.
+    monitorPerformance: # optional
+    # Custom executor that can specified
+    nativeExecutor: # optional
+    # If set to WARN, then liquibase will not throw exception on missing changelog file, instead will show a warning message.
+    onMissingIncludeChangelog: # optional
+    # If set to WARN, then Liquibase will not throw exception on missing sqlFile inside a sqlFile change type, instead will show a warning message
+    onMissingSqlFile: # optional
+    # 
+    outputFile: # optional
+    # Encoding to use when writing files
+    outputFileEncoding: # optional
+    # Line separator for output
+    outputLineSeparator: # optional
+    # Should liquibase treat schema and catalog names as case sensitive?
+    preserveSchemaCase: # optional
+    # If true, rollback execution will be forced when having partial changes that needs to be rolled back. Defaults to false.
+    proForceOnPartialChanges: # optional
+    # [PRO]The default end delimiter to use for all change sets
+    proGlobalEndDelimiter: # optional
+    # [PRO]If true, the global end delimiter overrides all other settings
+    proGlobalEndDelimiterPrioritized: # optional
+    # DEPRECATED: Liquibase Pro license key used to unlock paid capabilities. Get a free trial at https://www.liquibase.com/protrial and use in CLI or add liquibase.pro.licenseKey=<yourKey> into your defaults file.
+    proLicenseKey: # optional
+    # If a column would be dropped in a diffChangeLog, call markUnused instead if set to true
+    proMarkUnusedNotDrop: # optional
+    # If true, generate changeSets with SQL-based changes inlined instead of saving them to an external file
+    proSqlInline: # optional
+    # If false, do not drop public synonyms in diffChangeLog/dropAll
+    proSynonymsDropPublic: # optional
+    # Should Liquibase prompt if a non-local database is being accessed
+    promptForNonLocalDatabase: # optional
+    # Implementation of Properties class to provide additional driver properties
+    propertyProviderClass: # optional
+    # Enable or disable reporting.
+    reportsEnabled: # optional
+    # The format of the report. Currently, can only be set to "html".
+    reportsFormat: # optional
+    # The name of the reports.
+    reportsName: # optional
+    # The path to the directory to generate the reports.
+    reportsPath: # optional
+    # Complete list of Location(s) to search for files such as changelog files in. Multiple paths can be specified by separating them with commas.
+    searchPath: # optional
+    # If true, remove functionality from file parsers which could be used insecurely. Examples include (but not limited to) disabling remote XML entity support.
+    secureParsing: # optional
+    # Should Liquibase commands execute
+    shouldRun: # optional
+    # Should Liquibase snapshot data by default?
+    shouldSnapshotData: # optional
+    # If true, show a Liquibase banner on startup.
+    showBanner: # optional
+    # If true, all command arguments marked as hidden will be shown in the help output, ignoring the hidden flag. NOTE, due to the order of value provider loading at such an early point in Liquibase startup, you MUST set this as a environment variable. Command line parameters will not be recognized.
+    showHiddenArgs: # optional
+    # Level to log SQL statements to
+    sqlLogLevel: # optional
+    # Show SQLWarning messages
+    sqlShowSqlWarnings: # optional
+    # Be stricter on allowed Liquibase configuration and setup?
+    strict: # optional
+    # Support escaping changelog parameters using a colon. Example: ${:user.name}
+    supportPropertyEscaping: # optional
+    # Changes the default UI Service Logger used by Liquibase. Options are CONSOLE or LOGGER.
+    uiService: # optional
+    # If set to true (default value), createProcedure tags with a set schemaName will modify the procedure body with the given schema name.
+    useProcedureSchema: # optional
+    # Will perform xsd validation of XML changelog files. When many XML changelog files are included this validation may impact Liquibase performance. Defaults to true.
+    validateXmlChangelogFiles: # optional
+    # If true, long strings in Oracle will be chunked at 4000 characters when an insert statement is run, to avoid running afoul of Oracle"s 4000 character limit for insert statements to clob type columns (which appears as "ORA-01704: string literal too long.")
+    workaroundOracleClobCharacterLimit: # optional
+                      - name: Create Artifact YAML
+  # You may pin to the exact commit or the version.
+  # uses: opencontextinc/create-artifact-yaml@218aadb9180fd982c8f2aaa592573297bdb9550e
+  uses: opencontextinc/create-artifact-yaml@v1.0.1
+  with:
+    # Type of artifact. One of sbom, container, package, or image
+    type: 
+    # URL/URI of the artifact
+    url: 
+    # Directory to save YAML files to. If not specified then the directory oc-artifact-yaml will be used.
+    directory: # optional
+                      - name: Digitally Induced Test IHP App
+  # You may pin to the exact commit or the version.
+  # uses: AronNovak/test-ihp-app@0805ea571c6d8b728df0643d5b8924cf84f3c7d0
+  uses: AronNovak/test-ihp-app@0.0.5
+  with:
+    # Optional script path to be invoked before the actual test execution
+    test: # optional
+                      - name: Login to Oracle Cloud Infrastructure Registry (OCIR)
+  # You may pin to the exact commit or the version.
+  # uses: oracle-actions/login-ocir@f3bf26a0a3fcb7cfe437c605fd5394f05258714f
+  uses: oracle-actions/login-ocir@v1.2.1
+  with:
+    # Auth token for the OCI user to login with
+    auth_token: 
+                      - name: Deploy to Azure Container Instances
+  uses: Azure/aci-deploy@v1
+  with:
+    # Name of the Resource Group in which the Container Instance will be created
+    resource-group: 
+    # The storage account access key used to access the Azure File Share
+    azure-file-volume-account-key: # optional, default is 
+    # The name of the storage account that contains the Azure File Share
+    azure-file-volume-account-name: # optional, default is 
+    # The path within the container where the Azure File Volume should be mounted. Must not contain ":"
+    azure-file-volume-mount-path: # optional, default is 
+    # The name of the Azure File Share to be mounted as a volume
+    azure-file-volume-share-name: # optional, default is 
+    # Should the Azure File Share be Mounted as Read Only. Accepted { true, false }
+    azure-file-volume-read-only: # optional, default is 
+    # The command line to run when the container is started, e.g. "/bin/bash -c myscript.sh"
+    command-line: # optional, default is 
+    # Number of CPU Cores Required
+    cpu: # optional, default is 1
+    # The DNS Name Label for Container with Public IP
+    dns-name-label: 
+    # List of environment variables for the container. Space-seperated in "key=value" format
+    environment-variables: # optional, default is 
+    # The target directory path in the git repository. Must not contain ".."
+    gitrepo-dir: # optional, default is 
+    # The path within the container where the git repo volume should be mounted. Must not contain ":"
+    gitrepo-mount-path: # optional, default is 
+    # The commit hash for the specified revision
+    gitrepo-revision: # optional, default is 
+    # The URL of a git repository to be mounted as a volume
+    gitrepo-url: # optional, default is 
+    # The Number of GPU Resources needed in the Container
+    gpu-count: # optional, default is 
+    # The SKU for the GPUs specified. Accepted Values are { K80, P100, V100 }
+    gpu-sku: # optional, default is 
+    # Specify the fully qualified container image name. For example, "myregistry.azurecr.io/nginx:latest" or "python:3.7.2-alpine/"
+    image: 
+    # IP Address type of the Container Group. Accepted Values are { Private, Public }.Currently it only supports { Public }
+    ip-address: # optional, default is Public
+    # Location where the Container will be deployed
+    location: 
+    # The Log Analytics Workspace Name or Id
+    log-analytics-workspace: # optional
+    # The Log Analytics Workspace Key
+    log-analytics-workspace-key: # optional
+    # The Log type to be used. Accepted Values are { ContainerInsights, ContainerInstanceLogs }
+    log-type: # optional
+    # Required Memory of the Containers in GB, accurate to one decimal place
+    memory: # optional, default is 1.5
+    # Name of the Container Group Instance
+    name: 
+    # The OS type of the Containers. Accepted Values are  { Linux, Windows }
+    os-type: # optional, default is Linux
+    # The Ports to Open on the Container. Space seperate the ports for multiple values
+    ports: # optional, default is 80
+    # The Network protocol to use. Accepted Values are { TCP, UDP }
+    protocol: # optional, default is TCP
+    # The container image registry login server
+    registry-login-server: # optional, default is 
+    # Username to log in Container Image Registry Server
+    registry-username: # optional, default is 
+    # Password to log in Container Image Registry Server
+    registry-password: # optional, default is 
+    # Restart Policy for the container(s). Accepted Values are { Always, OnFailure, Never }
+    restart-policy: # optional, default is Always
+    # List of secure environment variables for the container. Space seperated values in "key=value" format
+    secure-environment-variables: # optional, default is 
+          
